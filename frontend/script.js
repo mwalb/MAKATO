@@ -66,8 +66,10 @@ function renderNetworkGrid() {
             <span class="network-name">${network.shortName}</span>
         `;
         
+        // Click handler
         card.addEventListener('click', () => selectNetwork(network.id));
         
+        // Keyboard accessibility
         card.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
@@ -82,12 +84,22 @@ function renderNetworkGrid() {
 function selectNetwork(networkId) {
     selectedNetworkId = networkId;
     
+    // Update UI
     document.querySelectorAll('.network-card').forEach(card => {
         const isActive = card.dataset.networkId === networkId;
         card.classList.toggle('active', isActive);
         card.setAttribute('aria-pressed', isActive);
     });
     
+    // AUTO-SCROLL to transaction type section
+    const formSection = document.getElementById('form-section');
+    if (formSection) {
+        setTimeout(() => {
+            formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
+    
+    // If results are already showing, recalculate
     if (resultsSection.style.display !== 'none') {
         const amount = parseFloat(amountInput.value);
         if (amount && amount >= MIN_AMOUNT) {
@@ -101,6 +113,7 @@ function selectNetwork(networkId) {
 // ============================================================================
 
 function setupEventListeners() {
+    // Transaction type radio buttons
     const typeOptions = transactionTypes.querySelectorAll('.type-option');
     typeOptions.forEach(option => {
         option.addEventListener('click', () => {
@@ -109,6 +122,7 @@ function setupEventListeners() {
             selectedTxType = radio.value;
             updateTypeSelectionUI();
             
+            // Recalculate if visible
             const amount = parseFloat(amountInput.value);
             if (resultsSection.style.display !== 'none' && amount && amount >= MIN_AMOUNT) {
                 calculateAndDisplay(amount);
@@ -116,11 +130,13 @@ function setupEventListeners() {
         });
     });
     
+    // Form submission
     transactionForm.addEventListener('submit', (e) => {
         e.preventDefault();
         handleCalculate();
     });
     
+    // Amount input validation cleanup
     amountInput.addEventListener('input', () => {
         amountInput.classList.remove('error');
         amountError.classList.remove('visible');
@@ -155,6 +171,7 @@ function setupQuickAmounts() {
             amountInput.classList.remove('error');
             amountError.classList.remove('visible');
             
+            // Visual feedback
             chips.forEach(c => {
                 c.style.borderColor = '';
                 c.style.color = '';
@@ -162,6 +179,7 @@ function setupQuickAmounts() {
             chip.style.borderColor = 'var(--color-primary)';
             chip.style.color = 'var(--color-primary)';
             
+            // Auto-calculate
             handleCalculate();
         });
     });
@@ -175,6 +193,7 @@ function handleCalculate() {
     const rawValue = amountInput.value.trim();
     const amount = parseFloat(rawValue);
     
+    // Validation
     if (!rawValue || isNaN(amount) || amount < MIN_AMOUNT) {
         amountInput.classList.add('error');
         amountError.classList.add('visible');
@@ -207,18 +226,30 @@ function findFee(networkId, amount, txType) {
 }
 
 function calculateAndDisplay(amount) {
+    // Calculate for selected network
     const fee = findFee(selectedNetworkId, amount, selectedTxType);
     const total = amount + fee;
+    
+    // Get network details
     const network = TZ_NETWORKS.find(n => n.id === selectedNetworkId);
     
+    // Render primary result
     renderPrimaryResult(network, amount, fee, total);
+    
+    // Generate smart advice
     generateAdvice(amount, fee);
+    
+    // Generate comparison table
     renderComparisonTable(amount);
+    
+    // Update WhatsApp link
     updateWhatsAppLink(network, amount, fee, total);
     
+    // Show results
     resultsSection.style.display = '';
     comparisonSection.style.display = '';
     
+    // Smooth scroll to results
     setTimeout(() => {
         resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
@@ -246,19 +277,20 @@ function renderPrimaryResult(network, amount, fee, total) {
 // ============================================================================
 
 function generateAdvice(amount, currentFee) {
+    // Calculate fees for ALL networks for the SAME transaction type
     const allFees = TZ_NETWORKS.map(n => ({
         network: n,
         fee: findFee(n.id, amount, selectedTxType)
     }));
     
+    // Sort by fee ascending
     allFees.sort((a, b) => a.fee - b.fee);
     
     const cheapest = allFees[0];
     const currentNetwork = TZ_NETWORKS.find(n => n.id === selectedNetworkId);
     const currentRank = allFees.findIndex(f => f.network.id === selectedNetworkId);
     
-    adviceBox.style.display = '';
-    
+    // If already cheapest
     if (cheapest.network.id === selectedNetworkId) {
         const secondCheapest = allFees[1];
         const savings = currentFee - secondCheapest.fee;
@@ -268,19 +300,23 @@ function generateAdvice(amount, currentFee) {
             <strong>${currentNetwork.shortName}</strong> ndio mtandao wa bei nafuu zaidi kwa muamala huu.
             ${savings > 0 ? `Unaokoa <span class="savings-amount">TSh ${formatNumber(savings)}</span> ukilinganisha na ${secondCheapest.network.shortName}.` : ''}
         `;
-    } else {
-        const savings = currentFee - cheapest.fee;
-        const rankText = currentRank === allFees.length - 1 ? 'ghali zaidi' : `namba ${currentRank + 1}`;
-        
-        adviceTitle.textContent = 'Ushauri wa Akiba 💡';
-        adviceText.innerHTML = `
-            Kwa muamala huu, <strong>${cheapest.network.shortName}</strong> ni bei nafuu zaidi.
-            ${currentNetwork.shortName} ni wa <strong>${rankText}</strong> kati ya mitandao yote.
-            <br><br>
-            Ukitumia <strong>${cheapest.network.shortName}</strong> badala ya ${currentNetwork.shortName}, 
-            unaweza <span class="savings-amount">kuokoa TSh ${formatNumber(savings)}</span>!
-        `;
+        adviceBox.style.display = '';
+        return;
     }
+    
+    // If not cheapest, show savings
+    const savings = currentFee - cheapest.fee;
+    const rankText = currentRank === allFees.length - 1 ? 'ghali zaidi' : `namba ${currentRank + 1}`;
+    
+    adviceTitle.textContent = 'Ushauri wa Akiba 💡';
+    adviceText.innerHTML = `
+        Kwa muamala huu, <strong>${cheapest.network.shortName}</strong> ni bei nafuu zaidi.
+        ${currentNetwork.shortName} ni wa <strong>${rankText}</strong> kati ya mitandao yote.
+        <br><br>
+        Ukitumia <strong>${cheapest.network.shortName}</strong> badala ya ${currentNetwork.shortName}, 
+        unaweza <span class="savings-amount">kuokoa TSh ${formatNumber(savings)}</span>!
+    `;
+    adviceBox.style.display = '';
 }
 
 // ============================================================================
@@ -290,6 +326,7 @@ function generateAdvice(amount, currentFee) {
 function renderComparisonTable(amount) {
     comparisonTableBody.innerHTML = '';
     
+    // Calculate fees for all networks for selected type to find cheapest
     const selectedFees = TZ_NETWORKS.map(n => findFee(n.id, amount, selectedTxType));
     const minFee = Math.min(...selectedFees);
     
