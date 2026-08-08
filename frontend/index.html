@@ -1,11 +1,235 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sw">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="description" content="Kokotoa makato ya mitandao ya simu Tanzania - M-Pesa, Halopesa, AzamPesa, Yas, Airtel Money">
+    <title>Kokotoa Makato | Tanzania Mobile Money Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-mark">
+                    <img src="assets/makato.jpeg" alt="Kokotoa Makato">
+                </div>
+                <div class="header-text">
+                    <h1>Kokotoa Makato</h1>
+                    <p>Tanzania Mobile Money Fee Calculator</p>
+                </div>
+            </div>
+        </header>
 
+        <main class="main-content">
+            <!-- Network Selection -->
+            <section class="section-card" id="network-section">
+                <div class="section-header">
+                    <h2>Chagua Mtandao</h2>
+                    <p class="subtitle">Bofya kuchagua mtoa huduma wako</p>
+                </div>
+                
+                <div class="network-grid" id="networkGrid">
+                    <!-- Networks injected by JS -->
+                </div>
+            </section>
+
+            <!-- Transaction Form -->
+            <section class="section-card" id="form-section">
+                <div class="section-header">
+                    <h2>Maelezo ya Muamala</h2>
+                    <p class="subtitle">Weka kiasi na aina ya muamala</p>
+                </div>
+
+                <form id="transactionForm" novalidate>
+                    <!-- Transaction Type -->
+                    <div class="form-group">
+                        <label class="form-label">Aina ya Muamala</label>
+                        <div class="transaction-types" id="transactionTypes">
+                            <label class="type-option active" data-type="send_same">
+                                <input type="radio" name="transactionType" value="send_same" checked>
+                                <span class="type-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M17 1l4 4-4 4"/>
+                                        <path d="M3 11V9a4 4 0 014-4h14"/>
+                                        <path d="M7 23l-4-4 4-4"/>
+                                        <path d="M21 13v2a4 4 0 01-4 4H3"/>
+                                    </svg>
+                                </span>
+                                <span class="type-text">
+                                    <strong>Tuma Ndani ya Mtandao</strong>
+                                    <small>Same Network</small>
+                                </span>
+                            </label>
+
+                            <label class="type-option" data-type="send_other">
+                                <input type="radio" name="transactionType" value="send_other">
+                                <span class="type-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M8 7l4-4 4 4"/>
+                                        <path d="M12 3v18"/>
+                                        <path d="M16 17l-4 4-4-4"/>
+                                    </svg>
+                                </span>
+                                <span class="type-text">
+                                    <strong>Tuma Kwenye Mtandao Mwingine</strong>
+                                    <small>Cross-network transfer</small>
+                                </span>
+                            </label>
+
+                            <label class="type-option" data-type="withdraw">
+                                <input type="radio" name="transactionType" value="withdraw">
+                                <span class="type-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                        <path d="M16 14l-4-4-4 4"/>
+                                        <path d="M12 10v8"/>
+                                    </svg>
+                                </span>
+                                <span class="type-text">
+                                    <strong>Toa Pesa (Agent)</strong>
+                                    <small>Cash withdrawal</small>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Amount Input -->
+                    <div class="form-group">
+                        <label for="amountInput" class="form-label">Kiasi cha Muamala (TSh)</label>
+                        <div class="amount-input-wrapper">
+                            <span class="amount-prefix">TSh</span>
+                            <input 
+                                type="number" 
+                                id="amountInput" 
+                                class="amount-input" 
+                                placeholder="0" 
+                                min="1" 
+                                step="1"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <span class="error-message" id="amountError">Tafadhali weka kiasi sahihi</span>
+                        <div class="quick-amounts" id="quickAmounts">
+                            <button type="button" class="quick-chip" data-amount="5000">5,000</button>
+                            <button type="button" class="quick-chip" data-amount="10000">10,000</button>
+                            <button type="button" class="quick-chip" data-amount="20000">20,000</button>
+                            <button type="button" class="quick-chip" data-amount="50000">50,000</button>
+                            <button type="button" class="quick-chip" data-amount="100000">100,000</button>
+                            <button type="button" class="quick-chip" data-amount="200000">200,000</button>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="calculate-btn" id="calculateBtn">
+                        <span class="btn-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                                <path d="M11 8v6M8 11h6" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span>KOKOTOA MAKATO</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Results Section (Hidden by default) -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <!-- Primary Result Card -->
+                <div class="section-card result-card">
+                    <div class="result-header">
+                        <div class="result-network" id="resultNetwork">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="result-badge" id="resultBadge">Muamala Wako</div>
+                    </div>
+
+                    <div class="result-breakdown">
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Kiasi cha Muamala</span>
+                            <span class="breakdown-value" id="resultAmount">TSh 0</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span class="breakdown-label">Aina ya Muamala</span>
+                            <span class="breakdown-value" id="resultType">-</span>
+                        </div>
+                        <div class="breakdown-row fee-row">
+                            <span class="breakdown-label">Makato ya Mtandao</span>
+                            <span class="breakdown-value fee-value" id="resultFee">TSh 0</span>
+                        </div>
+                        <div class="breakdown-divider"></div>
+                        <div class="breakdown-row total-row">
+                            <span class="breakdown-label">Jumla ya Kulipia</span>
+                            <span class="breakdown-value total-value" id="resultTotal">TSh 0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Advice Box -->
+                <div class="advice-box" id="adviceBox" style="display: none;">
+                    <div class="advice-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div class="advice-content">
+                        <h3 id="adviceTitle">Ushauri wa Akiba</h3>
+                        <p id="adviceText">-</p>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Share -->
+                <div class="share-section">
+                    <a href="#" class="whatsapp-btn" id="whatsappBtn" target="_blank" rel="noopener noreferrer">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                        </svg>
+                        <span>Share on WhatsApp</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Comparison Table -->
+            <section class="section-card comparison-section" id="comparisonSection" style="display: none;">
+                <div class="section-header">
+                    <h2>Makato kwa Mitandao Yote</h2>
+                    <p class="subtitle">Linganisha gharama za muamala huo kwa mitandao yote</p>
+                </div>
+                
+                <div class="table-wrapper">
+                    <table class="comparison-table" id="comparisonTable">
+                        <thead>
+                            <tr>
+                                <th>Mtandao</th>
+                                <th>Tuma Ndani</th>
+                                <th>Tuma Nje</th>
+                                <th>Toa Pesa</th>
+                                <th>Jumla (Ulichochagua)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="comparisonTableBody">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Kokotoa Makato &copy; 2026. Data is approximate. Verify with official provider tariffs.</p>
+            <p class="footer-note">Updated for Tanzania telecom fee structures. Not affiliated with any provider.</p>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
