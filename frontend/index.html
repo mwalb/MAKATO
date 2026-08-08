@@ -7,24 +7,42 @@
     <title>Kokotoa Makato | Tanzania Mobile Money Calculator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+<base target="_blank">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-content">
-                <div class="logo-mark">
-                    <img src="assets/makato.jpeg" alt="Kokotoa Makato">
+    <!-- Sticky Top Bar -->
+    <header class="top-bar">
+        <div class="top-bar-edge top-bar-edge-left"></div>
+        <div class="top-bar-inner">
+            <!-- Left: Logo + MAKATO -->
+            <div class="brand">
+                <div class="logo-circle">
+                    <img src="assets/makato.jpeg" alt="Kokotoa Makato Logo">
                 </div>
-                <div class="header-text">
-                    <h1>Kokotoa Makato</h1>
-                    <p>Tanzania Mobile Money Fee Calculator</p>
+                <span class="brand-name">MAKATO</span>
+            </div>
+
+            <!-- Center: Scrolling Marquee -->
+            <div class="marquee-container">
+                <div class="marquee-track">
+                    <span class="marquee-text">Kikokotoo cha Makato Tanzania</span>
+                    <span class="marquee-text">Kikokotoo cha Makato Tanzania</span>
+                    <span class="marquee-text">Kikokotoo cha Makato Tanzania</span>
                 </div>
             </div>
-        </header>
 
+            <!-- Right: Dark Mode Toggle -->
+            <button class="theme-toggle" id="themeToggle" aria-label="Badili muangaza">
+                <span class="theme-icon" id="themeIcon">🌙</span>
+                <span class="theme-label">Giza</span>
+            </button>
+        </div>
+        <div class="top-bar-edge top-bar-edge-right"></div>
+    </header>
+
+    <div class="app-container">
         <main class="main-content">
             <!-- Network Selection -->
             <section class="section-card" id="network-section">
@@ -32,10 +50,7 @@
                     <h2>Chagua Mtandao</h2>
                     <p class="subtitle">Bofya kuchagua mtoa huduma wako</p>
                 </div>
-                
-                <div class="network-grid" id="networkGrid">
-                    <!-- Networks injected by JS -->
-                </div>
+                <div class="network-grid" id="networkGrid"></div>
             </section>
 
             <!-- Transaction Form -->
@@ -47,7 +62,7 @@
 
                 <form id="transactionForm" novalidate>
                     <!-- Transaction Type -->
-                    <div class="form-group">
+                    <div class="form-group" id="type-group">
                         <label class="form-label">Aina ya Muamala</label>
                         <div class="transaction-types" id="transactionTypes">
                             <label class="type-option active" data-type="send_same">
@@ -61,7 +76,7 @@
                                     </svg>
                                 </span>
                                 <span class="type-text">
-                                    <strong>Tuma Ndani ya Mtandao</strong>
+                                    <strong>Ndani ya Mtandao</strong>
                                     <small>Same Network</small>
                                 </span>
                             </label>
@@ -76,7 +91,7 @@
                                     </svg>
                                 </span>
                                 <span class="type-text">
-                                    <strong>Tuma Kwenye Mtandao Mwingine</strong>
+                                    <strong>Mitandao Mingine</strong>
                                     <small>Cross-network transfer</small>
                                 </span>
                             </label>
@@ -91,15 +106,15 @@
                                     </svg>
                                 </span>
                                 <span class="type-text">
-                                    <strong>Toa Pesa (Agent)</strong>
-                                    <small>Cash withdrawal</small>
+                                    <strong>Toa Pesa kwa wakala</strong>
+                                    <small>Cash withdrawal (Agent)</small>
                                 </span>
                             </label>
                         </div>
                     </div>
 
                     <!-- Amount Input -->
-                    <div class="form-group">
+                    <div class="form-group" id="amount-group">
                         <label for="amountInput" class="form-label">Kiasi cha Muamala (TSh)</label>
                         <div class="amount-input-wrapper">
                             <span class="amount-prefix">TSh</span>
@@ -138,15 +153,13 @@
                 </form>
             </section>
 
-            <!-- Results Section (Hidden by default) -->
-            <section class="results-section" id="resultsSection" style="display: none;">
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection">
                 <!-- Primary Result Card -->
                 <div class="section-card result-card">
                     <div class="result-header">
-                        <div class="result-network" id="resultNetwork">
-                            <!-- Injected by JS -->
-                        </div>
-                        <div class="result-badge" id="resultBadge">Muamala Wako</div>
+                        <div class="result-network" id="resultNetwork"></div>
+                        <div class="result-badge">Muamala Wako</div>
                     </div>
 
                     <div class="result-breakdown">
@@ -170,8 +183,8 @@
                     </div>
                 </div>
 
-                <!-- Smart Advice Box -->
-                <div class="advice-box" id="adviceBox" style="display: none;">
+                <!-- Best Network Advice -->
+                <div class="advice-box advice-best" id="adviceBestBox">
                     <div class="advice-icon">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2L2 7l10 5 10-5-10-5z"/>
@@ -180,8 +193,73 @@
                         </svg>
                     </div>
                     <div class="advice-content">
+                        <h3 id="adviceBestTitle">Mtandao Bora kwa Gharama Ndogo</h3>
+                        <p id="adviceBestText">-</p>
+                    </div>
+                </div>
+
+                <!-- Savings Advice -->
+                <div class="advice-box" id="adviceBox">
+                    <div class="advice-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <div class="advice-content">
                         <h3 id="adviceTitle">Ushauri wa Akiba</h3>
                         <p id="adviceText">-</p>
+                    </div>
+                </div>
+
+                <!-- NA YA KUTOLEA Section -->
+                <div class="section-card kutolea-card" id="kutoleaSection">
+                    <div class="section-header">
+                        <h2>Na ya Kutolea</h2>
+                        <p class="subtitle">Pata kiasi cha kutuma ili mpokeaji atoe kiasi sahihi</p>
+                    </div>
+                    <button type="button" class="kutolea-btn" id="kutoleaBtn">
+                        <span>NA YA KUTOLEA</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </button>
+                    <div class="kutolea-panel" id="kutoleaPanel">
+                        <div class="form-group">
+                            <label class="form-label">Chagua Mtandao wa Mpokeaji</label>
+                            <select class="kutolea-select" id="kutoleaNetwork">
+                                <option value="">-- Chagua Mtandao --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Kiasi Anachotaka Kuchukua (TSh)</label>
+                            <div class="amount-input-wrapper">
+                                <span class="amount-prefix">TSh</span>
+                                <input type="number" id="kutoleaAmount" class="amount-input" placeholder="0" min="1" step="1">
+                            </div>
+                        </div>
+                        <button type="button" class="calculate-btn secondary-btn" id="kutoleaCalculateBtn">
+                            <span>KOKOTOA KIASI CHA KUTUMA</span>
+                        </button>
+                        <div class="kutolea-result" id="kutoleaResult">
+                            <div class="breakdown-row">
+                                <span class="breakdown-label">Kiasi cha Mpokeaji</span>
+                                <span class="breakdown-value" id="kutoleaDesiredAmount">TSh 0</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span class="breakdown-label">Makato ya Kutuma</span>
+                                <span class="breakdown-value fee-value" id="kutoleaSendFee">TSh 0</span>
+                            </div>
+                            <div class="breakdown-row">
+                                <span class="breakdown-label">Makato ya Kutoa</span>
+                                <span class="breakdown-value fee-value" id="kutoleaWithdrawFee">TSh 0</span>
+                            </div>
+                            <div class="breakdown-divider"></div>
+                            <div class="breakdown-row total-row">
+                                <span class="breakdown-label">Jumla ya Kiasi cha Kutuma</span>
+                                <span class="breakdown-value total-value" id="kutoleaTotalSend">TSh 0</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -197,26 +275,24 @@
             </section>
 
             <!-- Comparison Table -->
-            <section class="section-card comparison-section" id="comparisonSection" style="display: none;">
+            <section class="section-card comparison-section" id="comparisonSection">
                 <div class="section-header">
                     <h2>Makato kwa Mitandao Yote</h2>
                     <p class="subtitle">Linganisha gharama za muamala huo kwa mitandao yote</p>
                 </div>
-                
+
                 <div class="table-wrapper">
                     <table class="comparison-table" id="comparisonTable">
                         <thead>
                             <tr>
                                 <th>Mtandao</th>
-                                <th>Tuma Ndani</th>
-                                <th>Tuma Nje</th>
+                                <th>Ndani ya Mtandao</th>
+                                <th>Mitandao Mingine</th>
                                 <th>Toa Pesa</th>
                                 <th>Jumla (Ulichochagua)</th>
                             </tr>
                         </thead>
-                        <tbody id="comparisonTableBody">
-                            <!-- Injected by JS -->
-                        </tbody>
+                        <tbody id="comparisonTableBody"></tbody>
                     </table>
                 </div>
             </section>
@@ -224,8 +300,7 @@
 
         <!-- Footer -->
         <footer class="app-footer">
-            <p>Kokotoa Makato &copy; 2026. Data is approximate. Verify with official provider tariffs.</p>
-            <p class="footer-note">Updated for Tanzania telecom fee structures. Not affiliated with any provider.</p>
+            <p>© 2026 Kokotoa Makato. Viwango hivi ni vya kukadiria kulingana na makato rasmi ya mitandao ya simu Tanzania. Hakikisha unathibitisha na mtoa huduma wako. Hatufanyi kazi kama mawakala wa mtandao wowote.</p>
         </footer>
     </div>
 
