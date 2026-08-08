@@ -264,7 +264,7 @@
             `Kokotoa Makato:%0A%0A` +
             `Mtandao: ${net.name}%0A` +
             `Kiasi: ${formatMoney(amount)}%0A` +
-            `Aina ya muamala: ${TX_TYPE_LABELS[txType] || txType}%0A` +
+            `Aina ya muamala: Kutuma ${TX_TYPE_LABELS[txType] || txType}%0A` +
             `Makato: ${formatMoney(fee)}%0A` +
             `Inayotakiwa Simuni: ${formatMoney(total)}%0A%0A` +
             `https://kokotoamakato.com`;
