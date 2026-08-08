@@ -40,13 +40,9 @@
     const kutoleaAmount       = document.getElementById("kutoleaAmount");
     const kutoleaCalcBtn      = document.getElementById("kutoleaCalculateBtn");
     const kutoleaResult       = document.getElementById("kutoleaResult");
-    const kutoleaDesiredAmt   = document.getElementById("kutoleaDesiredAmount");
-    const kutoleaSendFee      = document.getElementById("kutoleaSendFee");
-    const kutoleaWithdrawFee  = document.getElementById("kutoleaWithdrawFee");
     const kutoleaTotalSend    = document.getElementById("kutoleaTotalSend");
 
     // Scroll targets
-    const formSection         = document.getElementById("form-section");
     const typeGroup           = document.getElementById("type-group");
     const amountGroup         = document.getElementById("amount-group");
 
@@ -54,6 +50,43 @@
     let selectedNetworkId = null;
     let lastCalculatedAmount = 0;
     let lastCalculatedType = "";
+
+    // ===================== COMMA FORMATTING HELPERS =====================
+    function formatWithCommas(value) {
+        // Remove all non-digit characters first
+        const digits = value.replace(/[^0-9]/g, '');
+        if (!digits) return '';
+        // Format with commas
+        return parseInt(digits, 10).toLocaleString('en-US');
+    }
+
+    function stripCommas(value) {
+        return value.replace(/[^0-9]/g, '');
+    }
+
+    function parseAmount(value) {
+        const raw = stripCommas(value);
+        return raw ? parseInt(raw, 10) : NaN;
+    }
+
+    function setupCommaInput(input) {
+        input.addEventListener('input', function(e) {
+            const cursorPos = input.selectionStart;
+            const oldLength = input.value.length;
+            const oldCommasBefore = (input.value.slice(0, cursorPos).match(/,/g) || []).length;
+
+            const formatted = formatWithCommas(input.value);
+            input.value = formatted;
+
+            const newCommasBefore = (formatted.slice(0, cursorPos).match(/,/g) || []).length;
+            const newCursorPos = cursorPos + (newCommasBefore - oldCommasBefore);
+            input.setSelectionRange(newCursorPos, newCursorPos);
+        });
+
+        input.addEventListener('blur', function() {
+            input.value = formatWithCommas(input.value);
+        });
+    }
 
     // ===================== INIT =====================
     function init() {
@@ -65,6 +98,8 @@
         renderNetworks();
         populateKutoleaDropdown();
         setupEventListeners();
+        setupCommaInput(amountInput);
+        setupCommaInput(kutoleaAmount);
         loadTheme();
     }
 
@@ -101,7 +136,6 @@
             document.querySelectorAll(".network-card").forEach((c) => c.classList.remove("active"));
             card.classList.add("active");
             selectedNetworkId = card.dataset.id;
-            // Auto-scroll to transaction type section
             setTimeout(() => scrollToElement(typeGroup), 150);
         });
 
@@ -111,18 +145,17 @@
                 transactionTypes.forEach((l) => l.classList.remove("active"));
                 label.classList.add("active");
                 label.querySelector('input[type="radio"]').checked = true;
-                // Auto-scroll to amount input
                 setTimeout(() => scrollToElement(amountGroup), 150);
             });
         });
 
-        // Quick amount chips → focus input and scroll to calculate button
+        // Quick amount chips → format with commas and scroll to calculate button
         quickChips.forEach((chip) => {
             chip.addEventListener("click", function () {
-                amountInput.value = chip.dataset.amount;
+                const val = parseInt(chip.dataset.amount, 10);
+                amountInput.value = val.toLocaleString('en-US');
                 amountError.classList.remove("show");
                 amountInput.focus();
-                // Scroll to show the calculate button
                 setTimeout(() => {
                     const btn = document.getElementById("calculateBtn");
                     scrollToElement(btn);
@@ -178,12 +211,12 @@
 
     // ===================== MAIN CALCULATION =====================
     function calculate() {
-        const rawValue = amountInput.value.trim();
-        const amount = parseInt(rawValue, 10);
+        const rawValue = amountInput.value;
+        const amount = parseAmount(rawValue);
         const minAmt = typeof MIN_AMOUNT !== "undefined" ? MIN_AMOUNT : 1;
         const maxAmt = typeof MAX_AMOUNT !== "undefined" ? MAX_AMOUNT : 10000000;
 
-        if (!rawValue || isNaN(amount) || amount < minAmt) {
+        if (isNaN(amount) || amount < minAmt) {
             amountError.textContent = "Tafadhali weka kiasi sahihi";
             amountError.classList.add("show");
             return;
@@ -245,7 +278,7 @@
         renderComparisonTable(amount, txType);
 
         // Pre-fill kutolea amount
-        kutoleaAmount.value = amount;
+        kutoleaAmount.value = amount.toLocaleString('en-US');
 
         // Scroll to results
         setTimeout(() => scrollToElement(resultsSection), 100);
@@ -329,33 +362,31 @@
     // ===================== NA YA KUTOLEA =====================
     function calculateKutolea() {
         const recipientNetworkId = kutoleaNetwork.value;
-        const rawValue = kutoleaAmount.value.trim();
-        const desiredAmount = parseInt(rawValue, 10);
+        const rawValue = kutoleaAmount.value;
+        const desiredAmount = parseAmount(rawValue);
 
         if (!recipientNetworkId) {
             alert("Tafadhali chagua mtandao wa mpokeaji kwanza.");
             return;
         }
-        if (!rawValue || isNaN(desiredAmount) || desiredAmount < 1) {
+        if (isNaN(desiredAmount) || desiredAmount < 1) {
             alert("Tafadhali weka kiasi sahihi cha kuchukua.");
             return;
         }
 
-        // Determine sender network (use selected or default to first)
+        // Determine sender network
         const senderNetworkId = selectedNetworkId || TZ_NETWORKS[0].id;
-
-        // Determine send type: same network or cross-network
         const sendType = (senderNetworkId === recipientNetworkId) ? "send_same" : "send_other";
 
-        // Find sendAmount such that: sendAmount - withdrawFee(sendAmount) >= desiredAmount
-        let sendAmount = desiredAmount;
-        let withdrawFee = getFee(recipientNetworkId, "withdraw", sendAmount);
+        // Step 1: Find walletAmount such that walletAmount - withdrawFee(walletAmount) >= desiredAmount
+        let walletAmount = desiredAmount;
+        let withdrawFee = getFee(recipientNetworkId, "withdraw", walletAmount);
 
         let found = false;
-        for (let test = desiredAmount; test <= desiredAmount + 200000; test += 100) {
+        for (let test = desiredAmount; test <= desiredAmount + 500000; test += 100) {
             const wf = getFee(recipientNetworkId, "withdraw", test);
             if (test - wf >= desiredAmount) {
-                sendAmount = test;
+                walletAmount = test;
                 withdrawFee = wf;
                 found = true;
                 break;
@@ -364,11 +395,11 @@
 
         // Fine-tune downward
         if (found) {
-            for (let test = sendAmount - 99; test >= desiredAmount; test--) {
+            for (let test = walletAmount - 1; test >= desiredAmount; test--) {
                 if (test < desiredAmount) break;
                 const wf = getFee(recipientNetworkId, "withdraw", test);
                 if (test - wf >= desiredAmount) {
-                    sendAmount = test;
+                    walletAmount = test;
                     withdrawFee = wf;
                 } else {
                     break;
@@ -376,24 +407,26 @@
             }
         }
 
+        // Fallback
         if (!found) {
             withdrawFee = getFee(recipientNetworkId, "withdraw", desiredAmount);
-            sendAmount = desiredAmount + withdrawFee;
-            const wf2 = getFee(recipientNetworkId, "withdraw", sendAmount);
+            walletAmount = desiredAmount + withdrawFee;
+            const wf2 = getFee(recipientNetworkId, "withdraw", walletAmount);
             if (wf2 !== withdrawFee) {
-                sendAmount = desiredAmount + wf2;
+                walletAmount = desiredAmount + wf2;
                 withdrawFee = wf2;
             }
         }
 
-        // Calculate send fee based on sendAmount
-        const sendFee = getFee(senderNetworkId, sendType, sendAmount);
-        const totalSend = sendAmount + sendFee;
+        // Step 2: Calculate send fee
+        const sendFee = getFee(senderNetworkId, sendType, walletAmount);
+        const totalSend = walletAmount + sendFee;
 
         // Update display
         document.getElementById("kutoleaDesiredAmount").textContent = formatMoney(desiredAmount);
         document.getElementById("kutoleaSendFee").textContent = formatMoney(sendFee);
         document.getElementById("kutoleaWithdrawFee").textContent = formatMoney(withdrawFee);
+        document.getElementById("kutoleaWalletAmount").textContent = formatMoney(walletAmount);
         document.getElementById("kutoleaTotalSend").textContent = formatMoney(totalSend);
 
         kutoleaResult.classList.add("show");

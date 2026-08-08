@@ -27,8 +27,9 @@
             <!-- Center: Scrolling Marquee -->
             <div class="marquee-container">
                 <div class="marquee-track">
-                    <span class="marquee-text">Jua makato yako kabla ya kutuma au kutoa pesa</span>
-                    <span class="marquee-text">Jua makato yako kabla ya kutuma au kutoa pesa</span>
+                    <span class="marquee-text">Kikokotoo cha Makato Tanzania</span>
+                    <span class="marquee-text">Kikokotoo cha Makato Tanzania</span>
+                    <span class="marquee-text">Kikokotoo cha Makato Tanzania</span>
                 </div>
             </div>
 
@@ -105,8 +106,8 @@
                                     </svg>
                                 </span>
                                 <span class="type-text">
-                                    <strong>Toa Pesa kwa wakala</strong>
-                                    <small>Cash withdrawal (Agent)</small>
+                                    <strong>Toa Pesa (Agent)</strong>
+                                    <small>Cash withdrawal</small>
                                 </span>
                             </label>
                         </div>
@@ -118,12 +119,12 @@
                         <div class="amount-input-wrapper">
                             <span class="amount-prefix">TSh</span>
                             <input 
-                                type="number" 
+                                type="text" 
                                 id="amountInput" 
                                 class="amount-input" 
                                 placeholder="0" 
-                                min="1" 
-                                step="1"
+                                inputmode="numeric" 
+                                pattern="[0-9,]*"
                                 autocomplete="off"
                             >
                         </div>
@@ -176,7 +177,7 @@
                         </div>
                         <div class="breakdown-divider"></div>
                         <div class="breakdown-row total-row">
-                            <span class="breakdown-label">Jumla ya Kulipia</span>
+                            <span class="breakdown-label">Jumla Inayotakiwa Iwepo Simuni</span>
                             <span class="breakdown-value total-value" id="resultTotal">TSh 0</span>
                         </div>
                     </div>
@@ -214,7 +215,7 @@
                 <!-- NA YA KUTOLEA Section -->
                 <div class="section-card kutolea-card" id="kutoleaSection">
                     <div class="section-header">
-                        <h2>Na ya Kutolea</h2>
+                        <h2>🎯 Na ya Kutolea</h2>
                         <p class="subtitle">Pata kiasi cha kutuma ili mpokeaji atoe kiasi sahihi</p>
                     </div>
                     <button type="button" class="kutolea-btn" id="kutoleaBtn">
@@ -234,7 +235,7 @@
                             <label class="form-label">Kiasi Anachotaka Kuchukua (TSh)</label>
                             <div class="amount-input-wrapper">
                                 <span class="amount-prefix">TSh</span>
-                                <input type="number" id="kutoleaAmount" class="amount-input" placeholder="0" min="1" step="1">
+                                <input type="text" id="kutoleaAmount" class="amount-input" placeholder="0" inputmode="numeric" pattern="[0-9,]*">
                             </div>
                         </div>
                         <button type="button" class="calculate-btn secondary-btn" id="kutoleaCalculateBtn">
@@ -254,8 +255,12 @@
                                 <span class="breakdown-value fee-value" id="kutoleaWithdrawFee">TSh 0</span>
                             </div>
                             <div class="breakdown-divider"></div>
-                            <div class="breakdown-row total-row">
+                            <div class="breakdown-row">
                                 <span class="breakdown-label">Jumla ya Kiasi cha Kutuma</span>
+                                <span class="breakdown-value" id="kutoleaWalletAmount">TSh 0</span>
+                            </div>
+                            <div class="breakdown-row total-row">
+                                <span class="breakdown-label"> Jumla Inayotakiwa Iwepo Simuni</span>
                                 <span class="breakdown-value total-value" id="kutoleaTotalSend">TSh 0</span>
                             </div>
                         </div>
