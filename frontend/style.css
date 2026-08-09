@@ -1082,43 +1082,32 @@ body {
     }
 }
 
-/* Extra small screens */
-@media (max-width: 360px) {
-    :root {
-        --top-bar-height: 68px;
+.mobile-break {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .total-row:has(.mobile-break) {
+        position: relative;
+        min-height: 44px;
+        padding-bottom: 0;
     }
 
-    .brand-name {
-        font-size: 1rem;
+    .total-row:has(.mobile-break) .breakdown-label {
+        display: block;
+        width: calc(100% - 70px);
+        line-height: 1.4;
     }
 
-    .marquee-text {
-        font-size: 0.65rem;
+    .total-row:has(.mobile-break) .mobile-break {
+        display: inline;
     }
 
-    .network-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
-    }
-
-    .network-card .net-name {
-        font-size: 0.78rem;
-    }
-
-    .type-text strong {
-        font-size: 0.8rem;
-    }
-
-    .type-text small {
-        font-size: 0.68rem;
-    }
-
-    .comparison-table {
-        font-size: 0.7rem;
-    }
-
-    .comparison-table th,
-    .comparison-table td {
-        padding: 6px 4px;
+    .total-row:has(.mobile-break) .breakdown-value {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        flex-shrink: 0;
+        margin: 0;
     }
 }
