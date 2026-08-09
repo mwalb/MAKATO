@@ -387,6 +387,9 @@ body {
     margin-bottom: 8px;
     font-size: 0.95rem;
     color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .amount-input-wrapper {
@@ -504,6 +507,7 @@ body {
 .secondary-btn {
     background: var(--success);
     margin-top: 4px;
+    white-space: nowrap;
 }
 
 .secondary-btn:hover {
@@ -548,9 +552,6 @@ body {
     margin-bottom: 20px;
     padding-bottom: 16px;
     border-bottom: 1px solid var(--border);
-    flex-wrap: nowrap;
-    gap: 12px;
-    overflow: hidden;
 }
 
 .result-network {
@@ -577,6 +578,8 @@ body {
     border-radius: 20px;
     font-size: 0.8rem;
     font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .result-breakdown {
@@ -871,28 +874,6 @@ body {
     margin: 0 auto;
 }
 
-/* ---------- No-Wrap Rules (Global) ---------- */
-.brand-name,
-.marquee-text,
-.type-text strong,
-.type-text small,
-.network-card .net-name,
-.comparison-table th,
-.comparison-table td,
-.breakdown-label,
-.breakdown-value,
-.result-badge,
-.section-header h2,
-.section-header .subtitle,
-.form-label,
-.calculate-btn,
-.kutolea-btn,
-.whatsapp-btn span,
-.advice-content h3,
-.advice-content p {
-    white-space: nowrap;
-}
-
 /* ---------- Responsive ---------- */
 @media (max-width: 720px) {
     :root {
@@ -1037,6 +1018,8 @@ body {
     .result-badge {
         padding: 4px 10px;
         font-size: 0.7rem;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .breakdown-row {
@@ -1072,6 +1055,7 @@ body {
     .kutolea-btn {
         font-size: 0.9rem;
         padding: 14px;
+        white-space: nowrap;
     }
 
     .kutolea-select {
