@@ -548,6 +548,9 @@ body {
     margin-bottom: 20px;
     padding-bottom: 16px;
     border-bottom: 1px solid var(--border);
+    flex-wrap: nowrap;
+    gap: 12px;
+    overflow: hidden;
 }
 
 .result-network {
@@ -795,8 +798,22 @@ body {
 
 .table-wrapper {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-radius: 12px;
     border: 1px solid var(--border);
+}
+
+.table-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: var(--bg);
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
 }
 
 .comparison-table {
@@ -854,44 +871,75 @@ body {
     margin: 0 auto;
 }
 
+/* ---------- No-Wrap Rules (Global) ---------- */
+.brand-name,
+.marquee-text,
+.type-text strong,
+.type-text small,
+.network-card .net-name,
+.comparison-table th,
+.comparison-table td,
+.breakdown-label,
+.breakdown-value,
+.result-badge,
+.section-header h2,
+.section-header .subtitle,
+.form-label,
+.calculate-btn,
+.kutolea-btn,
+.whatsapp-btn span,
+.advice-content h3,
+.advice-content p {
+    white-space: nowrap;
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 720px) {
     :root {
-        --top-bar-height: 80px;
+        --top-bar-height: 72px;
     }
 
     .top-bar-inner {
-        padding: 0 16px;
-        gap: 12px;
+        padding: 0 12px;
+        gap: 8px;
     }
 
     .top-bar-edge {
-        width: 4px;
+        width: 3px;
     }
 
     .logo-circle {
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         border-width: 2px;
-        box-shadow: 0 0 0 3px var(--primary-light);
+        box-shadow: 0 0 0 2px var(--primary-light);
     }
 
     .brand-name {
-        font-size: 1.3rem;
-        letter-spacing: 1px;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
     }
 
     .marquee-text {
-        font-size: 0.85rem;
+        font-size: 0.72rem;
+        letter-spacing: 0.3px;
     }
 
     .marquee-container {
-        margin: 0 10px;
+        margin: 0 6px;
+    }
+
+    .marquee-track {
+        gap: 40px;
     }
 
     .theme-toggle {
-        padding: 8px 12px;
-        gap: 6px;
+        padding: 6px 10px;
+        gap: 4px;
+    }
+
+    .theme-icon {
+        font-size: 1rem;
     }
 
     .theme-label {
@@ -899,48 +947,194 @@ body {
     }
 
     .app-container {
-        padding: calc(var(--top-bar-height) + 20px) 14px 30px;
+        padding: calc(var(--top-bar-height) + 16px) 12px 24px;
     }
 
     .section-card {
-        padding: 20px;
+        padding: 18px 14px;
         border-radius: 14px;
+    }
+
+    .section-header h2 {
+        font-size: 1.1rem;
+    }
+
+    .section-header .subtitle {
+        font-size: 0.82rem;
     }
 
     .network-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        gap: 8px;
     }
 
     .network-card {
-        padding: 14px 8px;
+        padding: 12px 6px;
     }
 
     .network-card .net-icon {
-        width: 40px;
-        height: 40px;
-    }
-
-    .type-option {
-        padding: 12px;
-        gap: 10px;
-    }
-
-    .type-icon {
         width: 36px;
         height: 36px;
     }
 
-    .comparison-table {
+    .network-card .net-name {
         font-size: 0.82rem;
+    }
+
+    .type-option {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .type-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .type-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .type-text strong {
+        font-size: 0.85rem;
+    }
+
+    .type-text small {
+        font-size: 0.72rem;
+    }
+
+    .amount-input {
+        font-size: 1rem;
+        padding: 12px 0;
+    }
+
+    .quick-chip {
+        padding: 6px 10px;
+        font-size: 0.78rem;
+    }
+
+    .calculate-btn {
+        padding: 14px;
+        font-size: 0.95rem;
+    }
+
+    .result-header {
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+
+    .result-network {
+        font-size: 0.95rem;
+        gap: 6px;
+    }
+
+    .result-network img {
+        width: 28px;
+        height: 28px;
+    }
+
+    .result-badge {
+        padding: 4px 10px;
+        font-size: 0.7rem;
+    }
+
+    .breakdown-row {
+        font-size: 0.9rem;
+        gap: 8px;
+    }
+
+    .breakdown-label {
+        font-size: 0.85rem;
+    }
+
+    .breakdown-value {
+        font-size: 0.9rem;
+    }
+
+    .fee-value {
+        font-size: 1rem;
+    }
+
+    .total-value {
+        font-size: 1.1rem;
+    }
+
+    .comparison-table {
+        font-size: 0.75rem;
     }
 
     .comparison-table th,
     .comparison-table td {
-        padding: 10px;
+        padding: 8px 6px;
     }
 
     .kutolea-btn {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        padding: 14px;
+    }
+
+    .kutolea-select {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    .advice-content h3 {
+        font-size: 0.9rem;
+    }
+
+    .advice-content p {
+        font-size: 0.82rem;
+    }
+
+    .whatsapp-btn {
+        padding: 12px 18px;
+        font-size: 0.88rem;
+    }
+
+    .app-footer {
+        font-size: 0.78rem;
+        padding: 20px 12px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+    :root {
+        --top-bar-height: 68px;
+    }
+
+    .brand-name {
+        font-size: 1rem;
+    }
+
+    .marquee-text {
+        font-size: 0.65rem;
+    }
+
+    .network-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+
+    .network-card .net-name {
+        font-size: 0.78rem;
+    }
+
+    .type-text strong {
+        font-size: 0.8rem;
+    }
+
+    .type-text small {
+        font-size: 0.68rem;
+    }
+
+    .comparison-table {
+        font-size: 0.7rem;
+    }
+
+    .comparison-table th,
+    .comparison-table td {
+        padding: 6px 4px;
     }
 }
