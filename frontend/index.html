@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
     <!-- Sticky Top Bar -->
@@ -28,8 +29,8 @@
             <div class="marquee-container">
                 <div class="marquee-track">
                     <span class="marquee-text">Jua makato yako kabla ya kutuma au kutoa pesa</span>
-                    <span class="marquee-text">Jua makato yako kabla ya kutuma au kutoa pesa/span>
-                    <span class="marquee-text">Jua makato yako kabla ya kutuma au kutoa pesa/span>
+                    <span class="marquee-text">Jua makato yako kabla ya kutuma au kutoa pesa</span>
+                    <span class="marquee-text">Jua makato yako kabla ya kutuma au kutoa pesa</span>
                 </div>
             </div>
 
@@ -110,6 +111,19 @@
                                     <small>Cash withdrawal (Agent)</small>
                                 </span>
                             </label>
+
+                            <label class="type-option lipa-namba-option" data-type="lipa_namba">
+                                <input type="radio" name="transactionType" value="lipa_namba">
+                                <span class="type-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                                    </svg>
+                                </span>
+                                <span class="type-text">
+                                    <strong>Kutoa kwa lipa Namba </strong>
+                                    <small>Merchant Number</small>
+                                </span>
+                            </label>
                         </div>
                     </div>
 
@@ -174,6 +188,19 @@
                         <div class="breakdown-row fee-row">
                             <span class="breakdown-label">Makato ya Mtandao</span>
                             <span class="breakdown-value fee-value" id="resultFee">TSh 0</span>
+                        </div>
+                        <!-- Lipa Namba breakdown (hidden by default) -->
+                        <div class="breakdown-row lipa-namba-row" id="lipaNambaNetworkRow" style="display:none;">
+                            <span class="breakdown-label">Makato ya Mtandao</span>
+                            <span class="breakdown-value fee-value" id="lipaNambaNetworkFee">TSh 0</span>
+                        </div>
+                        <div class="breakdown-row lipa-namba-row" id="lipaNambaAgentRow" style="display:none;">
+                            <span class="breakdown-label">Nyongeza ya Wakala</span>
+                            <span class="breakdown-value agent-fee-value" id="lipaNambaAgentFee">TSh 0</span>
+                        </div>
+                        <div class="breakdown-row lipa-namba-row" id="lipaNambaTotalRow" style="display:none;">
+                            <span class="breakdown-label">Jumla ya Makato</span>
+                            <span class="breakdown-value fee-value" id="lipaNambaTotalFee">TSh 0</span>
                         </div>
                         <div class="breakdown-divider"></div>
                         <div class="breakdown-row total-row">
@@ -291,10 +318,11 @@
                         <thead>
                             <tr>
                                 <th>Mtandao</th>
-                                <th>Ndani ya Mtandao</th>
-                                <th>Mitandao Mingine</th>
-                                <th>Toa Pesa</th>
-                                <th>Jumla (Ulichochagua)</th>
+                                <th>Ndani</th>
+                                <th>Mingine</th>
+                                <th>Toa</th>
+                                <th>Lipa Namba</th>
+                                <th>Jumla</th>
                             </tr>
                         </thead>
                         <tbody id="comparisonTableBody"></tbody>

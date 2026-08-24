@@ -42,6 +42,16 @@
     const kutoleaResult       = document.getElementById("kutoleaResult");
     const kutoleaTotalSend    = document.getElementById("kutoleaTotalSend");
 
+    // Lipa Namba result elements
+    const lipaNambaNetworkRow = document.getElementById("lipaNambaNetworkRow");
+    const lipaNambaAgentRow   = document.getElementById("lipaNambaAgentRow");
+    const lipaNambaTotalRow   = document.getElementById("lipaNambaTotalRow");
+    const merchantReceivesRow = document.getElementById("merchantReceivesRow");
+    const lipaNambaNetworkFee = document.getElementById("lipaNambaNetworkFee");
+    const lipaNambaAgentFee   = document.getElementById("lipaNambaAgentFee");
+    const lipaNambaTotalFee   = document.getElementById("lipaNambaTotalFee");
+    const merchantReceives    = document.getElementById("merchantReceives");
+
     // Scroll targets
     const typeGroup           = document.getElementById("type-group");
     const amountGroup         = document.getElementById("amount-group");
@@ -250,8 +260,36 @@
         `;
         resultAmount.textContent = formatMoney(amount);
         resultType.textContent = TX_TYPE_LABELS[txType] || txType;
-        resultFee.textContent = formatMoney(fee);
-        resultTotal.textContent = formatMoney(total);
+
+        // Handle Lipa Namba special display
+        if (txType === "lipa_namba") {
+            const lnFee = getLipaNambaFee(amount);
+            const lipaTotal = amount + lnFee.total;
+
+            // Hide standard fee row, show Lipa Namba breakdown
+            document.querySelector(".breakdown-row.fee-row").style.display = "none";
+            lipaNambaNetworkRow.style.display = "flex";
+            lipaNambaAgentRow.style.display = "flex";
+            lipaNambaTotalRow.style.display = "flex";
+
+            lipaNambaNetworkFee.textContent = formatMoney(lnFee.network);
+            lipaNambaAgentFee.textContent = formatMoney(lnFee.agent);
+            lipaNambaTotalFee.textContent = formatMoney(lnFee.total);
+
+            // For Lipa Namba: Jumla Inayotakiwa Iwepo Simuni = Kiasi + Makato Yote
+            resultFee.textContent = formatMoney(lnFee.total);
+            resultTotal.textContent = formatMoney(lipaTotal);
+        } else {
+            // Standard display
+            document.querySelector(".breakdown-row.fee-row").style.display = "flex";
+            lipaNambaNetworkRow.style.display = "none";
+            lipaNambaAgentRow.style.display = "none";
+            lipaNambaTotalRow.style.display = "none";
+            merchantReceivesRow.style.display = "none";
+
+            resultFee.textContent = formatMoney(fee);
+            resultTotal.textContent = formatMoney(total);
+        }
 
         // Best network advice
         renderBestNetworkAdvice(amount, txType, selectedNetworkId, fee);
@@ -260,14 +298,30 @@
         renderSavingsAdvice(net, txType, amount, fee);
 
         // WhatsApp share
-        const shareText =
-            `Kokotoa Makato:%0A%0A` +
-            `Mtandao: ${net.name}%0A` +
-            `Kiasi: ${formatMoney(amount)}%0A` +
-            `Aina ya muamala: Kutuma ${TX_TYPE_LABELS[txType] || txType}%0A` +
-            `Makato: ${formatMoney(fee)}%0A` +
-            `Inayotakiwa Simuni: ${formatMoney(total)}%0A%0A` +
-            `https://kokotoamakato.com`;
+        let shareText = "";
+        if (txType === "lipa_namba") {
+            const lnFee = getLipaNambaFee(amount);
+            const lipaTotal = amount + lnFee.total;
+            shareText =
+                `Kokotoa Makato - Lipa Namba:%0A%0A` +
+                `Mtandao: ${net.name}%0A` +
+                `Kiasi cha Muamala: ${formatMoney(amount)}%0A` +
+                `Aina ya muamala: ${TX_TYPE_LABELS[txType] || txType}%0A` +
+                `Makato ya Mtandao: ${formatMoney(lnFee.network)}%0A` +
+                `Nyongeza ya Wakala: ${formatMoney(lnFee.agent)}%0A` +
+                `Jumla ya Makato: ${formatMoney(lnFee.total)}%0A` +
+                `Inayotakiwa Simuni: ${formatMoney(lipaTotal)}%0A%0A` +
+                `https://kokotoamakato.com`;
+        } else {
+            shareText =
+                `Kokotoa Makato:%0A%0A` +
+                `Mtandao: ${net.name}%0A` +
+                `Kiasi: ${formatMoney(amount)}%0A` +
+                `Aina ya muamala: ${TX_TYPE_LABELS[txType] || txType}%0A` +
+                `Makato: ${formatMoney(fee)}%0A` +
+                `Inayotakiwa Simuni: ${formatMoney(total)}%0A%0A` +
+                `https://kokotoamakato.com`;
+        }
         whatsappBtn.href = "https://wa.me/?text=" + shareText;
 
         // Show sections
@@ -286,6 +340,21 @@
 
     // ===================== BEST NETWORK ADVICE =====================
     function renderBestNetworkAdvice(amount, txType, currentNetId, currentFee) {
+        // For Lipa Namba, all networks charge the same
+        if (txType === "lipa_namba") {
+            const lnFee = getLipaNambaFee(amount);
+            const lipaTotal = amount + lnFee.total;
+            adviceBestText.innerHTML = 
+                `Kwa malipo ya <strong>${formatMoney(amount)}</strong> kupitia <strong>Lipa Namba</strong>, ` +
+                `makato ni <strong>sawa kwa mitandao yote</strong>. ` +
+                `Makato ya mtandao: <strong>${formatMoney(lnFee.network)}</strong>, ` +
+                `nyongeza ya wakala: <strong>${formatMoney(lnFee.agent)}</strong>. ` +
+                `Jumla ya makato: <strong>${formatMoney(lnFee.total)}</strong>. ` +
+                `Inayotakiwa Simuni: <strong>${formatMoney(lipaTotal)}</strong>.`;
+            adviceBestBox.classList.add("show");
+            return;
+        }
+
         let bestNet = null;
         let bestFee = Infinity;
 
@@ -318,6 +387,27 @@
 
     // ===================== SAVINGS ADVICE =====================
     function renderSavingsAdvice(net, txType, amount, fee) {
+        // Lipa Namba special advice
+        if (txType === "lipa_namba") {
+            const lnFee = getLipaNambaFee(amount);
+            const lipaTotal = amount + lnFee.total;
+            const feePercent = amount > 0 ? ((lnFee.total / amount) * 100).toFixed(1) : "0.0";
+            let advice = "";
+
+            if (lnFee.total === 0) {
+                advice = `Hongera! Malipo ya ${formatMoney(amount)} kupitia Lipa Namba ni bure. Inayotakiwa Simuni ni ${formatMoney(amount)}.`;
+            } else if (parseFloat(feePercent) > 5) {
+                advice = `Makato ya Lipa Namba kwa ${formatMoney(amount)} ni ${formatMoney(lnFee.total)} (${feePercent}%). ` +
+                         `Inayotakiwa Simuni ni ${formatMoney(lipaTotal)}. Fikiria kufanya malipo kwa kiasi kingine kama inawezekana.`;
+            } else {
+                advice = `Makato ya Lipa Namba kwa ${formatMoney(amount)} ni ${formatMoney(lnFee.total)} (${feePercent}%). ` +
+                         `Inayotakiwa Simuni ni ${formatMoney(lipaTotal)}. Hii ni ya kawaida kwa kiasi hiki.`;
+            }
+            adviceText.textContent = advice;
+            adviceBox.classList.add("show");
+            return;
+        }
+
         const feePercent = amount > 0 ? ((fee / amount) * 100).toFixed(1) : "0.0";
         let advice = "";
 
@@ -335,11 +425,14 @@
 
     // ===================== COMPARISON TABLE =====================
     function renderComparisonTable(amount, txType) {
+        const lipaFee = txType === "lipa_namba" ? getLipaNambaFee(amount).total : getFee(TZ_NETWORKS[0].id, "lipa_namba", amount);
+
         comparisonTableBody.innerHTML = TZ_NETWORKS.map((n) => {
             const sameFee = getFee(n.id, "send_same", amount);
             const otherFee = getFee(n.id, "send_other", amount);
             const withdrawFee = getFee(n.id, "withdraw", amount);
-            const chosenFee = getFee(n.id, txType, amount);
+            const lipaNambaFee = getFee(n.id, "lipa_namba", amount);
+            const chosenFee = txType === "lipa_namba" ? lipaNambaFee : getFee(n.id, txType, amount);
             const isActive = n.id === selectedNetworkId;
 
             return `
@@ -353,6 +446,7 @@
                     <td>${formatMoney(sameFee)}</td>
                     <td>${formatMoney(otherFee)}</td>
                     <td>${formatMoney(withdrawFee)}</td>
+                    <td>${formatMoney(lipaNambaFee)}</td>
                     <td class="${isActive ? "highlight" : ""}">${formatMoney(chosenFee)}</td>
                 </tr>
             `;

@@ -30,6 +30,11 @@
     --highlight-row: #f0f9ff;
     --top-bar-height: 92px;
     --edge-accent: #0ea5e9;
+    --lipa-primary: #059669;
+    --lipa-light: #d1fae5;
+    --lipa-dark: #047857;
+    --agent-fee: #d97706;
+    --success-amount: #059669;
 }
 
 /* ---------- Dark Mode Variables ---------- */
@@ -59,6 +64,11 @@
     --advice-best-border: #38bdf8;
     --highlight-row: #0c4a6e;
     --edge-accent: #38bdf8;
+    --lipa-primary: #34d399;
+    --lipa-light: #064e3b;
+    --lipa-dark: #6ee7b7;
+    --agent-fee: #fbbf24;
+    --success-amount: #34d399;
 }
 
 /* ---------- Base Reset ---------- */
@@ -342,6 +352,15 @@ body {
     background: var(--primary-light);
 }
 
+.type-option.lipa-namba-option.active {
+    border-color: var(--lipa-primary);
+    background: var(--lipa-light);
+}
+
+.type-option.lipa-namba-option .type-icon svg {
+    color: var(--lipa-primary);
+}
+
 .type-option input {
     display: none;
 }
@@ -400,6 +419,8 @@ body {
     border-radius: 12px;
     padding: 0 16px;
     transition: border-color 0.2s ease;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .amount-input-wrapper:focus-within {
@@ -420,7 +441,8 @@ body {
 }
 
 .amount-input {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
     border: none;
     background: transparent;
     padding: 14px 0;
@@ -429,6 +451,8 @@ body {
     color: var(--text);
     outline: none;
     font-family: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .amount-input::placeholder {
@@ -593,6 +617,22 @@ body {
     justify-content: space-between;
     align-items: center;
     font-size: 1rem;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+
+.breakdown-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.breakdown-value {
+    flex: 0 0 auto;
+    text-align: right;
+    white-space: nowrap;
 }
 
 .breakdown-label {
@@ -608,6 +648,27 @@ body {
 .fee-value {
     color: var(--fee);
     font-size: 1.2rem;
+}
+
+.agent-fee-value {
+    color: var(--agent-fee);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.success-value {
+    color: var(--success-amount);
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.lipa-namba-row {
+    animation: fadeInUp 0.3s ease;
+}
+
+.lipa-namba-row .breakdown-label {
+    color: var(--lipa-primary);
+    font-weight: 600;
 }
 
 .total-value {
@@ -858,6 +919,11 @@ body {
     color: var(--primary);
 }
 
+.comparison-table td:nth-child(5) {
+    color: var(--lipa-primary);
+    font-weight: 600;
+}
+
 .comparison-table tr.active-row td {
     background: var(--highlight-row);
     font-weight: 700;
@@ -988,6 +1054,15 @@ body {
     .amount-input {
         font-size: 1rem;
         padding: 12px 0;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .amount-prefix {
+        font-size: 0.85rem;
+        margin-right: 6px;
+        flex-shrink: 0;
     }
 
     .quick-chip {
@@ -1003,6 +1078,16 @@ body {
     .result-header {
         flex-wrap: nowrap;
         gap: 8px;
+        min-width: 0;
+    }
+
+    .result-header .result-network {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .result-header .result-network img {
+        flex-shrink: 0;
     }
 
     .result-network {
@@ -1025,6 +1110,21 @@ body {
     .breakdown-row {
         font-size: 0.9rem;
         gap: 8px;
+        flex-wrap: nowrap;
+    }
+
+    .breakdown-label {
+        font-size: 0.82rem;
+        line-height: 1.3;
+        min-width: 0;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+    }
+
+    .breakdown-value {
+        font-size: 0.9rem;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .breakdown-label {
@@ -1045,6 +1145,11 @@ body {
 
     .comparison-table {
         font-size: 0.75rem;
+    }
+
+    .agent-fee-value,
+    .success-value {
+        font-size: 1rem;
     }
 
     .comparison-table th,
