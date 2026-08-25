@@ -46,7 +46,6 @@
     const lipaNambaNetworkRow = document.getElementById("lipaNambaNetworkRow");
     const lipaNambaAgentRow   = document.getElementById("lipaNambaAgentRow");
     const lipaNambaTotalRow   = document.getElementById("lipaNambaTotalRow");
-    const merchantReceivesRow = document.getElementById("merchantReceivesRow");
     const lipaNambaNetworkFee = document.getElementById("lipaNambaNetworkFee");
     const lipaNambaAgentFee   = document.getElementById("lipaNambaAgentFee");
     const lipaNambaTotalFee   = document.getElementById("lipaNambaTotalFee");
@@ -285,7 +284,6 @@
             lipaNambaNetworkRow.style.display = "none";
             lipaNambaAgentRow.style.display = "none";
             lipaNambaTotalRow.style.display = "none";
-            merchantReceivesRow.style.display = "none";
 
             resultFee.textContent = formatMoney(fee);
             resultTotal.textContent = formatMoney(total);
