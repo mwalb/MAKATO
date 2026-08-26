@@ -1227,3 +1227,58 @@ body {
         padding: 6px 4px;
     }
 }
+
+/* ---------- ADS ---------- */
+.ad-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px 0;
+    overflow: hidden;
+}
+
+.ad-banner-728 {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.ad-banner-728 iframe,
+.ad-banner-728 > * {
+    max-width: 100%;
+    height: auto;
+}
+
+.ad-native {
+    width: 100%;
+    min-height: 90px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ad-section {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 16px var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.ad-label {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.7;
+}
+
+@media (max-width: 720px) {
+    .ad-banner-728 {
+        display: none;
+    }
+}
