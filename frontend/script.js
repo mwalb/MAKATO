@@ -309,7 +309,7 @@
                 `Nyongeza ya Wakala: ${formatMoney(lnFee.agent)}%0A` +
                 `Jumla ya Makato: ${formatMoney(lnFee.total)}%0A` +
                 `Inayotakiwa Simuni: ${formatMoney(lipaTotal)}%0A%0A` +
-                `https://kokotoamakato.com`;
+                `https://makato.co.tz`;
         } else {
             shareText =
                 `Kokotoa Makato:%0A%0A` +
@@ -318,7 +318,7 @@
                 `Aina ya muamala: ${TX_TYPE_LABELS[txType] || txType}%0A` +
                 `Makato: ${formatMoney(fee)}%0A` +
                 `Inayotakiwa Simuni: ${formatMoney(total)}%0A%0A` +
-                `https://kokotoamakato.com`;
+                `https://makato.co.tz`;
         }
         whatsappBtn.href = "https://wa.me/?text=" + shareText;
 
